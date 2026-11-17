@@ -13,3 +13,16 @@ function selectMod(tab){const key=tab.dataset.mod;const m=modalities[key];tabs.f
 tabs.forEach((tab,i)=>{tab.addEventListener('click',()=>selectMod(tab));tab.addEventListener('keydown',e=>{let n;if(e.key==='ArrowRight')n=(i+1)%tabs.length;else if(e.key==='ArrowLeft')n=(i-1+tabs.length)%tabs.length;else if(e.key==='Home')n=0;else if(e.key==='End')n=tabs.length-1;if(n!==undefined){e.preventDefault();selectMod(tabs[n]);tabs[n].focus();tabs[n].scrollIntoView({block:'nearest',inline:'nearest'});}});});
 document.getElementById('goal-form').addEventListener('submit',e=>{e.preventDefault();const goal=document.getElementById('goal').value;window.open(waBase+'?text='+encodeURIComponent('Olá, equipe ZQU4TRO! Quero '+goal+'. Podem me ajudar com os planos e os próximos passos?'),'_blank','noopener,noreferrer');});
 document.getElementById('year').textContent=new Date().getFullYear();
+
+// A faixa pode ser pausada por toque, teclado ou ao passar o mouse.
+const ticker=document.querySelector('.ticker');
+const tickerToggle=document.querySelector('.ticker-toggle');
+tickerToggle.addEventListener('click',()=>{const paused=ticker.classList.toggle('is-paused');tickerToggle.setAttribute('aria-pressed',String(paused));tickerToggle.setAttribute('aria-label',paused?'Retomar faixa em movimento':'Pausar faixa em movimento');});
+const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+if(!reduceMotion.matches&&'IntersectionObserver' in window){
+ const targets=document.querySelectorAll('.experience>div,.section-top,.mod-layout,.schedule-table,.visit-photo,.visit-copy,.faq>div,.final-cta .wrap');
+ const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target);}});},{threshold:.08});
+ targets.forEach((target,i)=>{target.dataset.reveal='';target.style.setProperty('--reveal-delay',(i%2)*70+'ms');observer.observe(target);});
+ document.documentElement.classList.add('reveal-ready');
+}
+tabs.forEach(tab=>tab.addEventListener('click',()=>{if(reduceMotion.matches)return;const panel=document.getElementById('mod-panel');panel.classList.remove('is-changing');requestAnimationFrame(()=>{panel.classList.add('is-changing');});}));
