@@ -1,0 +1,15 @@
+const waBase='https://wa.me/5513978029534';
+function setWhatsApp(link,message){link.href=waBase+'?text='+encodeURIComponent(message);link.target='_blank';link.rel='noopener noreferrer';}
+document.querySelectorAll('[data-wa]').forEach(a=>setWhatsApp(a,a.dataset.wa));
+const modalities={
+ musculacao:{tag:'FORÇA & CONSTÂNCIA',title:'CONSTRUA A SUA\nMELHOR VERSÃO.',description:'Seu momento de focar em você. Faça da musculação uma aliada da sua rotina e dos seus objetivos.',name:'musculação'},
+ funcional:{tag:'MOVIMENTO & ENERGIA',title:'SEU CORPO EM\nMOVIMENTO.',description:'Varie os estímulos e coloque energia na sua rotina. Terça e quinta, às 18h e às 19h, com turmas de 50 minutos.',name:'funcional'},
+ spinning:{tag:'RITMO & CONDICIONAMENTO',title:'ENTRE NO RITMO.\nVÁ MAIS LONGE.',description:'Pedale com a turma! Segunda, quarta e sexta, com aulas pela manhã e à noite. Veja a grade de horários abaixo.',name:'spinning'},
+ yoga:{tag:'PRESENÇA & EQUILÍBRIO',title:'RESPIRE. CONECTE.\nREENCONTRE-SE.',description:'Abra espaço para uma pausa em movimento. Aulas de yoga às segundas e quartas, das 18h às 19h.',name:'yoga'},
+ pilates:{tag:'CONTROLE & CONSCIÊNCIA',title:'MOVIMENTE-SE\nCOM INTENÇÃO.',description:'Conheça o pilates na ZQU4TRO e encontre uma nova maneira de se movimentar. Consulte os horários e a disponibilidade com a equipe.',name:'pilates'}
+};
+const tabs=[...document.querySelectorAll('[data-mod]')];
+function selectMod(tab){const key=tab.dataset.mod;const m=modalities[key];tabs.forEach(t=>{const active=t===tab;t.setAttribute('aria-selected',String(active));t.tabIndex=active?0:-1;});document.getElementById('mod-img').src='assets/'+key+'-hd.webp';document.getElementById('mod-img').alt=m.name+' — imagem ilustrativa';document.getElementById('mod-tag').textContent=m.tag;const title=document.getElementById('mod-title');title.replaceChildren();m.title.split('\n').forEach((line,i)=>{if(i)title.append(document.createElement('br'));title.append(document.createTextNode(line));});document.getElementById('mod-desc').textContent=m.description;document.getElementById('mod-panel').setAttribute('aria-labelledby',tab.id);setWhatsApp(document.getElementById('mod-cta'),'Olá! Quero saber mais sobre '+m.name+' na ZQU4TRO.');}
+tabs.forEach((tab,i)=>{tab.addEventListener('click',()=>selectMod(tab));tab.addEventListener('keydown',e=>{let n;if(e.key==='ArrowRight')n=(i+1)%tabs.length;else if(e.key==='ArrowLeft')n=(i-1+tabs.length)%tabs.length;else if(e.key==='Home')n=0;else if(e.key==='End')n=tabs.length-1;if(n!==undefined){e.preventDefault();selectMod(tabs[n]);tabs[n].focus();tabs[n].scrollIntoView({block:'nearest',inline:'nearest'});}});});
+document.getElementById('goal-form').addEventListener('submit',e=>{e.preventDefault();const goal=document.getElementById('goal').value;window.open(waBase+'?text='+encodeURIComponent('Olá, equipe ZQU4TRO! Quero '+goal+'. Podem me ajudar com os planos e os próximos passos?'),'_blank','noopener,noreferrer');});
+document.getElementById('year').textContent=new Date().getFullYear();
